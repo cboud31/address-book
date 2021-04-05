@@ -1,4 +1,5 @@
 const express = require('express');
+const morgan = require('morgan');
 const connectDB = require('./config/db');
 
 const server = express();
@@ -7,6 +8,7 @@ const server = express();
 connectDB();
 
 // Middleware
+server.use(morgan('dev'));
 server.use(express.json({ extended: false }));
 
 server.get('/', (req, res) =>

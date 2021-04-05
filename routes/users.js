@@ -1,9 +1,9 @@
 const { genSalt } = require('bcryptjs');
 const express = require('express');
+const usersRouter = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-// const config = require('');
-const usersRouter = express.Router();
+const config = require('config');
 const { check, validationResult } = require('express-validator');
 const User = require('../models/User');
 
@@ -52,7 +52,17 @@ usersRouter.post(
         },
       };
 
-      jwt.sign(payload);
+      jwt.sign(
+        payload,
+        config.get('jwtSecret'),
+        {
+          expiresIn: 360000,
+        },
+        (err, token) => {
+          if (err) throw err;
+          res.json({ token });
+        }
+      );
     } catch (error) {
       console.error(error.message);
       res.status(500).send('Server Error!');
