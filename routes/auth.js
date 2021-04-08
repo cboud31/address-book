@@ -29,8 +29,8 @@ authRouter.get('/', verifyToken, async (req, res) => {
 authRouter.post(
   '/',
   [
-    check('email', 'Please include a valid email').isEmail(),
-    check('password', 'Password is required').exists(),
+    check('email', 'Invalid Credentials').isEmail(),
+    check('password', 'Invalid Credentials').exists(),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -44,13 +44,13 @@ authRouter.post(
       let user = await User.findOne({ email });
       // 2. If there is no user, return early with error message.
       if (!user) {
-        return res.status(400).send({ msg: 'Invalid Credentials!' });
+        return res.status(400).send({ msg: 'User already exists' });
       }
       // 3. Check password accuracy using bcrypt compare.
       //    If password is incorrect, return early with error message.
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
-        return res.status(400).send({ msg: 'Invalid Credentials!' });
+        return res.status(400).send({ msg: 'Invalid Credentials' });
       }
       // 4. Generate and send token.
       const payload = {
